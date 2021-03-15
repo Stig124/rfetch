@@ -1,0 +1,7 @@
+MODIFY THE FILE WITH YOUR INFORMATION AND RENAME THE FILE to settings.yml
+app:
+  client_id: <REPLACE WITH APP CLIENT ID (see docs)>
+  client_secret: <REPLACE WITH APP SECRET (see docs)>
+user:
+  rname: <REPLACE WITH USERNAME (WITH u/)>
+  subname: <REPLACE WITH THE DESIRED SUBREDDIT (WITHOUT r/)>

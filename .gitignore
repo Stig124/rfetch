@@ -1,0 +1,6 @@
+settings.yaml
+*.jpg
+*.png
+*.bmp
+.idea/*
+__pycache__/*
