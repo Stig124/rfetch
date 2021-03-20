@@ -19,40 +19,6 @@ subname = str(conf['user']['subname'])  # Get the requested subreddit from the c
 subreddit = reddit.subreddit(subname)  # Declare the requested subreddit
 
 
-def prereq():
-    with os.system('cmd /c "magceick"') as cmd:
-        if cmd.returncode != 0:
-            print("ImageMagick is not installed on your system (or your path is mismatched)")
-            print("If you want, I can install it automatically using chocolatey")
-            print("This will install ImageMagick, gsudo and Chocolatey (if not installed)")
-            ins = input("Install? y or n")
-            if ins == "y" or ins == "n":
-                with os.system('cmd /c "choco"') as cmd2:
-                    if cmd2.returncode != 0:
-                        print("Installing choco")
-                        choco()
-                    else:
-                        magick()
-            else:
-                print("Wrong Input, exiting")
-
-
-def choco():
-    with os.system('PowerShell -Command "Set-ExecutionPolicy RemoteSigned -scope Process; iwr -useb https://raw.githubusercontent.com/gerardog/gsudo/master/installgsudo.ps1 | iex"') as gsudoins:
-        if gsudoins.returncode != 0:
-            print("gsudo installed failed")
-        else:
-            with os.system('gsudo Powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(\'https://chocolatey.org/install.ps1\'))"') as chocoins:
-                if chocoins.returncode != 0:
-                    print("choco install failed")
-                else:
-                    with os.system('cmd /c "choco"') as ctest:
-                        if ctest.returncode != 0:
-                            print("choco install failed")
-                        else:
-                            print("Chocolatey install succeded, installing ImageMagick")
-
-
 def conf(clisubname=subname, clidelete=delete):
     """
     Alter the .yaml configured settings (if nothing given, the defaults are in the yaml file)
@@ -95,7 +61,6 @@ def dl(uri, imgtype):
         local_filename = str(subname) + ".png"
     with curl.get(uri) as r:
         if r.status_code == 200:
-            print(str(r.status_code) + " " + curl.status_codes._codes[r.status_code][0])
             with open(local_filename, "wb") as file:
                 file.write(r.content)
                 file.close()
