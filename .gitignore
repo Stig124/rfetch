@@ -4,3 +4,6 @@ settings.yaml
 *.bmp
 .idea/*
 __pycache__/*
+
+*.txt
+!requirements.txt
