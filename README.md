@@ -45,9 +45,9 @@ Fetch and applies the most upvoted image in any image subreddit as a wallpaper (
 
 ## :sparkles: Features ##
 
-:heavy_check_mark: Automatic fetching and validation of grabbed URLs
-:heavy_check_mark: Choosing a random post (coming soon)
-:heavy_check_mark: Automatic prerequirements install script (coming soon)
+:heavy_check_mark: Automatic fetching and validation of grabbed URLs\
+:heavy_check_mark: Choosing a random post (coming soon)\
+:heavy_check_mark: Automatic prerequirements install script (coming soon)\
 
 ## :rocket: Technologies ##
 
