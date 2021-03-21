@@ -1,5 +1,6 @@
 import ctypes
 import os
+import random
 import fire
 import praw
 import requests as curl
@@ -13,17 +14,19 @@ secret = str(conf['app']['client_secret'])
 user = str(conf['user']['rname'])
 uagent = "python:rfetch:v0.0.3b (by " + user
 delete = bool(conf['user']['delete'])
+randompost = int(conf['user']['random'])
 
 reddit = praw.Reddit(client_id=cid, client_secret=secret, user_agent=uagent, )  # Declare the Reddit instance
 subname = str(conf['user']['subname'])  # Get the requested subreddit from the config file
 subreddit = reddit.subreddit(subname)  # Declare the requested subreddit
 
 
-def conf(clisubname=subname, clidelete=delete):
+def conf(clisubname=subname, clidelete=delete, clirandom=randompost):
     """
     Alter the .yaml configured settings (if nothing given, the defaults are in the yaml file)
     :param clisubname: Name of the subreddit, without the r/
     :param clidelete: If you want to delete the file after the wallpaper is changed enter True
+    :param clirandom: Select the upper bound of the randomisation, if no random enter 1 or 0
     """
     global subname
     subname = clisubname
@@ -31,26 +34,33 @@ def conf(clisubname=subname, clidelete=delete):
     subreddit = reddit.subreddit(clisubname)
     global delete
     delete = clidelete
+    global randompost
+    randompost = int(clirandom)
 
 
 def grab():
-    for submission in subreddit.top("day", limit=1):  # Get the top daily submission ID
-        post = reddit.submission(id=submission)
-        uri = post.url  # Extract the image URL
-        print(uri)
-        if validators.url(str(uri)) is True:  # Checks the validity of the URL
-            if (uri.endswith(".jpg") is True) or (uri.endswith(".png") is True):  # Checks if the URL is an image URL
-                if uri.endswith(".jpg") is True:
-                    imgtype = ".jpg"
+    lim = int(random.randint(1, randompost))
+    e = 0
+    for submission in subreddit.top("day"):  # Get the top daily submission ID
+        if e == random.randint(1, lim):
+            post = reddit.submission(id=submission)
+            uri = post.url  # Extract the image URL
+            print(uri)
+            if validators.url(str(uri)) is True:  # Checks the validity of the URL
+                if (uri.endswith(".jpg") is True) or (uri.endswith(".png") is True):  # Checks if is an image URL
+                    if uri.endswith(".jpg") is True:
+                        imgtype = ".jpg"
+                    else:
+                        imgtype = ".png"
+                    return uri, imgtype
                 else:
-                    imgtype = ".png"
-                return uri, imgtype
+                    print("This link isn't an image")
+                    exit(1)
             else:
-                print("This link isn't an image")
-                exit(1)
+                print("This link isn't valid")
+                exit(12)
         else:
-            print("This link isn't valid")
-            exit(12)
+            e = e + 1
 
 
 def dl(uri, imgtype):

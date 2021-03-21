@@ -1,9 +1,11 @@
-  MODIFY THE FILE WITH YOUR INFORMATION AND RENAME THE FILE to settings.yml
+  # MODIFY THE FILE WITH YOUR INFORMATION AND RENAME THE FILE to settings.yml
   app:
-    client_id: <REPLACE WITH APP CLIENT ID (see docs)>
-    client_secret: <REPLACE WITH APP SECRET (see docs)>
+    client_id: # <REPLACE WITH APP CLIENT ID (see docs)>
+    client_secret: # <REPLACE WITH APP SECRET (see docs)>
   user:
     rname: <REPLACE WITH YOUR USERNAME (WITH u/)>
     subname: <REPLACE WITH THE DESIRED SUBREDDIT (WITHOUT r/)>
     delete: 0
-    # <^ 1 IF DELETE AFTER APPLYING IS REQUIRED, OTHERWISE 0>
+        # <^^ 1 IF DELETE AFTER APPLYING IS REQUIRED, OTHERWISE 0>
+    random: 1
+        # <Select the upper bound of the randomisation, if no random enter 1>
