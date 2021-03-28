@@ -10,6 +10,7 @@ pyyaml = "*"
 wand = "*"
 validators = "*"
 fire = "*"
+idna = "==2.10"
 
 [dev-packages]
 
