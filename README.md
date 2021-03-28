@@ -41,12 +41,12 @@
 
 ## :dart: About ##
 
-Fetch and applies the most upvoted image in any image subreddit as a wallpaper (Windows only for the moment)
+Fetch and applies the most upvoted image in any image subreddit as a wallpaper on Windows
 
 ## :sparkles: Features ##
 
 :heavy_check_mark: Automatic fetching and validation of grabbed URLs
-:heavy_check_mark: Choosing a random post (coming soon)
+:heavy_check_mark: Choosing a random post (in beta)
 :heavy_check_mark: Automatic prerequirements install script (coming soon)
 
 ## :rocket: Technologies ##
@@ -65,7 +65,7 @@ Before starting :checkered_flag:, you need to have
 - [Git](https://git-scm.com)
 - [Python 3](https://python.org)
 - [ImageMagick](https://imagemagick.org/script/download.php)
-- a Reddit app registered as a `script`, see [Reddit API Quick Start](https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps), use a dummy redirect URL like `http://localhost:8080`
+- a Reddit app registered as a `script`, see [Reddit API Quick Start](https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps) and use a dummy redirect URL like `http://localhost:8080`
 
 ## :checkered_flag: Starting ##
 
@@ -87,6 +87,12 @@ cd rfetch
 pip install -r requirements.txt
 ```
 
+###### For the users of [pipenv](https://pipenv.pypa.io/en/latest/) a Pipfile is included #######
+
+```shell
+pipenv install
+```
+
 ##### Modifiy the [settings.yaml.sample](./settings.yaml.sample) file with the corresponding settings then #####
 
 ```shell
@@ -105,10 +111,10 @@ __NOTE__ : **There is no way to revert a wallpaper change !** *(an history of im
 
 ## Usage ##
 
-Running `python ./main.py` fetches all the settings from the `settings.yaml` files but is is possible to change those settings on the fly :
+Running `python ./main.py` (or `python3 ./main.py`) fetches all the settings from the `settings.yaml` files but is is possible to change those settings on the fly :
 
 ```shell
-python ./main.py <SUBNAME> <DELETE>
+python ./main.py <SUBNAME> <DELETE> <RANDOM>
 ```
 
 `Subname` :
@@ -117,10 +123,12 @@ Overrides the subreddit name defined in the config file [Syntax : subreddit name
 `Delete` :
 Opting in the automatic deletion of the image ater being set as a wallpaper [Syntax : `True` or `False`]
 
+`Randomizing`
+Randomize the post from which the image will be taken [Syntax: a number between `1` and `~ 200`]
 ##### :bangbang: Warning
 
 Some subreddits will not work if they don't use URLs with image type ending (xxx.xxx.jpg/png)
-Tested and working subs :
+Some tested and working subs :
 
 - r/earthporn
 - r/villageporn
