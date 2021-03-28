@@ -1,9 +1,9 @@
-*.yaml
+settings.yaml
 *.jpg
 *.png
 *.bmp
+.idea/*
 __pycache__/*
-.*
+.vscode
 *.txt
-!requirements-*.txt
-*.scrap
+!requirements.txt
