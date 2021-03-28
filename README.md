@@ -41,12 +41,12 @@
 
 ## :dart: About ##
 
-Fetch and applies the most upvoted image in any image subreddit as a wallpaper (Windows only for the moment)
+Fetch and applies the most upvoted image in any image subreddit as a wallpaper on Windows, MacOS and KDE
 
 ## :sparkles: Features ##
 
 :heavy_check_mark: Automatic fetching and validation of grabbed URLs\
-:heavy_check_mark: Choosing a random post (coming soon)\
+:heavy_check_mark: Choosing a random post in the top\
 :heavy_check_mark: Automatic prerequirements install script (coming soon)
 
 ## :rocket: Technologies ##
@@ -56,7 +56,7 @@ The following tools were used in this project:
 - [PRAW](https://github.com/adrn/pyraw)
 - [Reddit API](https://www.reddit.com/dev/api)
 - [Google Python-Fire](https://github.com/google/python-fire)
-- You can find the python modules list in [requirements.txt](./requirements.txt)
+- You can find the python modules list in [requirements.txt](./requirements-win.txt)
 
 ## :white_check_mark: Requirements ##
 
@@ -64,7 +64,9 @@ Before starting :checkered_flag:, you need to have
 
 - [Git](https://git-scm.com)
 - [Python 3](https://python.org)
-- [ImageMagick](https://imagemagick.org/script/download.php)
+- [ImageMagick](https://imagemagick.org/script/download.php) on Windows
+- dbus for KDE (see [this](https://stackoverflow.com/a/62510708) if you have issues with installing the packages)
+- Your terminal to be allowed `Full Disk access` from the MacOS's `Security and Privacy` `System Preferences` tab
 - a Reddit app registered as a `script`, see [Reddit API Quick Start](https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps), use a dummy redirect URL like `http://localhost:8080`
 
 ## :checkered_flag: Starting ##
@@ -84,8 +86,9 @@ cd rfetch
 ##### Grab the required python packages *(NOTE : a virtualenv is highly recommanded to avoid pakcage mess)* #####
 
 ```shell
-pip install -r requirements.txt
+pip install -r requirements-<YOUR OS>.txt
 ```
+*This is really important that you choose the right OS, some modules will only build on a specific OS (like `appscript` only on MacOS)
 
 ##### Modifiy the [settings.yaml.sample](./settings.yaml.sample) file with the corresponding settings then #####
 
@@ -119,8 +122,8 @@ Opting in the automatic deletion of the image ater being set as a wallpaper [Syn
 
 ##### :bangbang: Warning
 
-Some subreddits will not work if they don't use URLs with image type ending (xxx.xxx.jpg/png)
-Tested and working subs :
+Some subreddits will not work if the posts don't use URLs with image type ending (xxx.xxx.jpg/png)
+Some tested and working subs :
 
 - r/earthporn
 - r/villageporn
