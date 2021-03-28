@@ -10,7 +10,6 @@ pyyaml = "*"
 wand = "*"
 validators = "*"
 fire = "*"
-dbus-python = "*"
 
 [dev-packages]
 

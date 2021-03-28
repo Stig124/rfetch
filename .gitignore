@@ -1,10 +1,9 @@
-settings.yaml
+*.yaml
 *.jpg
 *.png
 *.bmp
-.idea/*
 __pycache__/*
-
+.*
 *.txt
-!requirements.txt
+!requirements-*.txt
 *.scrap

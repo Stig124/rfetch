@@ -9,28 +9,41 @@ import yaml
 import platform
 
 
-conf = yaml.safe_load(open('settings.yaml'))
-cid = str(conf['app']['client_id'])
-secret = str(conf['app']['client_secret'])
-user = str(conf['user']['rname'])
+conf = yaml.safe_load(open("settings.yaml"))
+cid = str(conf["app"]["client_id"])
+secret = str(conf["app"]["client_secret"])
+user = str(conf["user"]["rname"])
 uagent = "python:rfetch:v0.0.3b (by " + user
-delete = bool(conf['user']['delete'])
-randompost = int(conf['user']['random'])
+delete = bool(conf["user"]["delete"])
+randompost = int(conf["user"]["random"])
 
-reddit = praw.Reddit(client_id=cid, client_secret=secret, user_agent=uagent, )  # Declare the Reddit instance
-subname = str(conf['user']['subname'])  # Get the requested subreddit from the config file
+reddit = praw.Reddit(
+    client_id=cid,
+    client_secret=secret,
+    user_agent=uagent,
+)  # Declare the Reddit instance
+subname = str(
+    conf["user"]["subname"]
+)  # Get the requested subreddit from the config file
 subreddit = reddit.subreddit(subname)  # Declare the requested subreddit
 
 
 def preconf():
-    if platform.system() == 'Windows':
+    """
+    Detect the running OS (and desktop environnement on Linux)
+
+    Returns:
+        str: OS/DE identifier
+    """
+    if platform.system() == "Windows":
         return "Win"
-    elif platform.system() == 'Darwin':
-        print('Not supported on MacOS (yet)')
-        exit(25)
+    elif platform.system() == "Darwin":
+        return "Mac"
     else:
         desktop_session = os.environ.get("DESKTOP_SESSION")
-        if desktop_session is not None:  # easier to match if we doesn't have  to deal with caracter cases
+        if (
+            desktop_session is not None
+        ):  # easier to match if we doesn't have  to deal with caracter cases
             desktop_session = desktop_session.lower()
             if desktop_session in ["kde", "kubuntu", "plasma", "neon"]:
                 return "kde"
@@ -54,34 +67,57 @@ def conf(clisubname=subname, clidelete=delete, clirandom=randompost):
 
 
 def grab():
-    lim = int(random.randint(1, randompost))
-    e = 1
-    for submission in subreddit.top("day"):  # Get the top daily submission ID
-        print(submission-)
-        if e == random.randint(1, lim):
-            post = reddit.submission(id=submission)
-            print(submission)
-            uri = post.url  # Extract the image URL
-            print(uri)
-            if validators.url(str(uri)) is True:  # Checks the validity of the URL
-                if (uri.endswith(".jpg") is True) or (uri.endswith(".png") is True):  # Checks if is an image URL
-                    if uri.endswith(".jpg") is True:
-                        imgtype = ".jpg"
-                    else:
-                        imgtype = ".png"
-                    return uri, imgtype
-                else:
-                    print("This link isn't an image")
-                    exit(1)
+    """
+    Grab the post, extracts the image URL, validates it and returns it
+
+    Returns:
+        uri (str): The post's image URL
+        imgtype (str): The detected image type
+    """
+    lim = randompost
+    e = random.randint(0, lim)
+    posts = [
+        post
+        for post in subreddit.top(
+            "day",
+            limit=lim,
+        )
+    ]
+    print(posts)
+    submission = posts[e]
+    post = reddit.submission(id=submission)
+    print(submission)
+    uri = post.url  # Extract the image URL
+    print(uri)
+    if validators.url(str(uri)) is True:  # Checks the validity of the URL
+        if (uri.endswith(".jpg") is True) or (
+            uri.endswith(".png") is True
+        ):  # Checks if is an image URL
+            if uri.endswith(".jpg") is True:
+                imgtype = ".jpg"
             else:
-                print("This link isn't valid")
-                exit(12)
+                imgtype = ".png"
+            return uri, imgtype
         else:
-            e = e + 1
+            print("This link isn't an image")
+            exit(1)
+    else:
+        print("This link isn't valid")
+        exit(12)
 
 
 def dl(uri, imgtype):
-    print('Downloading the top daily image from r/' + subname)
+    """
+    Downloads the image
+
+    Args:
+        uri (str): Image URL
+        imgtype (str): Image type
+
+    Returns:
+        local_filename (str): Local saved file image filepath
+    """
+    print("Downloading the top daily image from r/" + subname)
     if imgtype == ".jpg":
         local_filename = str(subname) + ".jpg"
     else:
@@ -92,16 +128,33 @@ def dl(uri, imgtype):
                 file.write(r.content)
                 file.close()
         else:
-            print(str(r.status_code) + "  " + curl.status_codes._codes[r.status_code][0])
+            print(
+                str(r.status_code) + "  " + curl.status_codes._codes[r.status_code][0]
+            )
     return local_filename
 
 
 def setbackground(image, imgtype, de):
-    if de == 'Win':
+    """
+    Sets the downloaded image as a wallpaper using
+    - Ctypes on Windows
+    - KDE's DBUS interface
+    - Mac's apple script (You may run up into permissions issues)
+    Args:
+        image (str): [description]
+        imgtype (str): [description]
+        de (str): [description]
+
+    Returns:
+        image (str): Image filepath (to delete afterwards if selected)
+        savename (str, only on Windows): BMP converted filepath
+    """
+    if de == "Win":
         from wand.image import Image
+
         with Image(filename=image) as wall:
             savename = str(image).replace(imgtype, ".bmp")
-            wall.format = 'bmp'
+            wall.format = "bmp"
             wall.save(filename=savename)
             image = str(image)
         path = os.getcwd()
@@ -110,13 +163,19 @@ def setbackground(image, imgtype, de):
         print(pathh)
         SPI_SETDESKTOPWALLPAPER = 20
         ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, path, 3)
-        return image, savename
-    elif de == 'kde':
+        if delete == 1:
+            global delete
+            delete = 0
+            delete(image, savename)
+        else:
+            print("Program is done running !")
+    elif de == "kde":
         print("You're running kde")
         import dbus
+
         filepath = os.getcwd()
         filepath = filepath + "/" + image
-        plugin = 'org.kde.image'
+        plugin = "org.kde.image"
         jscript = """
         var allDesktops = desktops();
         print (allDesktops);
@@ -128,10 +187,22 @@ def setbackground(image, imgtype, de):
         }
         """
         bus = dbus.SessionBus()
-        plasma = dbus.Interface(bus.get_object('org.kde.plasmashell', '/PlasmaShell'), dbus_interface='org.kde'
-                                                                                                      '.PlasmaShell') 
+        plasma = dbus.Interface(
+            bus.get_object("org.kde.plasmashell", "/PlasmaShell"),
+            dbus_interface="org.kde" ".PlasmaShell",
+        )
         plasma.evaluateScript(jscript % (plugin, plugin, filepath))
         print("Wallpaper set")
+        return image, filepath
+    elif de == "Mac":
+        print("You're running MacOS")
+        from appscript import app, mactypes
+
+        filepath = os.getcwd()
+        filepath = filepath + "/" + image
+        app("Finder").desktop_picture.set(mactypes.File(filepath))
+        print("Done setting wallpaper")
+        return image, filepath
 
 
 def delete(image, savename):
@@ -150,7 +221,10 @@ if __name__ == "__main__":
     fire.Fire(conf)
     url, imgtype = grab()
     img = dl(url, imgtype)
-    setbackground(img, imgtype, osr)
-
+    image = setbackground(img, imgtype, osr)
+    if delete == 1:
+        delete(image, None)
+    else:
+        print("Program is done running !")
 else:
     exit(0)
