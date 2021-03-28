@@ -4,6 +4,6 @@ settings.yaml
 *.bmp
 .idea/*
 __pycache__/*
-
+.vscode
 *.txt
 !requirements.txt
